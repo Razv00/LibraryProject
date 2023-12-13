@@ -1,0 +1,93 @@
+{% extends "autentificare/index.html" %}
+{%block title%}Raport{% endblock %}
+{% load static %}
+
+{%block content%}
+
+<div class="page-container">
+
+        {% if user.is_authenticated %}
+                <h1>Raport Carti</h1>
+
+                <h2>Carti Imprumutate</h2>
+
+                <ul>
+                    {% for carte in carti_imprumutate %}
+                        <li>{{ carte.titlu }} - Împrumutata catre: {{ carte.utilizator_imprumutat.username }} - Trebuie să revina: {{ carte.data_revenire }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Carti Disponibile</h2>
+                <ul>
+                    {% for carte in carti_disponibile %}
+                        <li>{{ carte.titlu }} - Disponibila</li>
+                    {% endfor %}
+                </ul>
+
+        {% endif %}
+
+
+
+  </div>
+
+
+<style>
+    /* Custom CSS for styling */
+    .page-container {
+      text-align: center;
+      margin-top: 50px;
+    }
+  
+    .page-title {
+      font-size: 30px;
+      margin-bottom: 20px;
+    }
+  
+    .button-container {
+      margin-top: 20px;
+    }
+  
+    .action-button {
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background-color 0.3s ease-in-out;
+    }
+  
+    .action-button:hover {
+      background-color: #0056b3;
+    }
+  
+    .info-container {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f8f8f8;
+      border-radius: 5px;
+      text-align: left;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+  
+    .info-title {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+  
+    .info-subtitle {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #007bff;
+    }
+  
+    .info-description {
+      font-size: 18px;
+      color: #555;
+      line-height: 1.5;
+    }
+  </style>
+{%endblock%}

@@ -3,34 +3,91 @@
 {% load static %}
 
 {%block content%}
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+</style>
 
 <div class="page-container">
-    <h1 class="page-title">Pagina principala</h1>
-
         {% if user.is_authenticated %}
             {% if user.is_superuser %}
-                <!-- Conținut specific pentru admin -->
-                <h1>Bun venit, Admin!</h1>
-                <p>Aici este conținutul specific pentru admin.</p>
+                <h3>Bun venit, {{user.username}}</h3>
+                <h2>Introduceti o carte in biblioteca</h2>
 
-                <form method="POST">
+                <div class="form-group">
+                    <form method="POST">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit">Adaugă Carte</button>
-                </form>
 
-                <!-- Alte elemente pentru admin -->
+                    <button type="submit" class="btn btn-primary">Adaugă Carte</button>
+                    </form>
+                </div>
+
+                <div class="form-group">
+                    <form method="GET">
+                        <input type="text" name="search_query" placeholder="Caută după nume...">
+                        <button type="submit" class="btn btn-secondary">Caută</button>
+                    </form>
+                </div>
+                <div class="info-container">
+                    <h2 class="info-title">Rezultate cautare:</h2>
+                    {% if carti_cautate %}
+                        <ul>
+                            {% for carte in carti_cautate %}
+                                <div class="carte">
+                                    <p><strong>Titlu:</strong> {{ carte.titlu }}</p>
+                                    <p><strong>Autor:</strong> {{ carte.autor }}</p>
+                                    <p><strong>Descriere:</strong> {{ carte.descriere }}</p>
+                                    <p><strong>Disponibil:</strong> {% if carte.disponibil %}
+                                        Da
+                                        {% else %}
+                                        Nu
+                                        {% endif %}
+                                    </p>
+                                    {% if not carte.disponibil %}
+                                        <p><strong>Imprumutata de:</strong> {{ carte.utilizator_imprumutat }}</p>
+                                        <p><strong>Trebuie sa revina: </strong>{{carte.data_revenire}}</p>
+                                    {% endif %}
+
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Niciun rezultat găsit.</p>
+                    {% endif %}
+                </div>
+
             {% else %}
-                <!-- Conținut specific pentru utilizator normal -->
-                <h1>Bun venit, Utilizator!</h1>
-                <p>Aici este conținutul specific pentru utilizator.</p>
-                <!-- Alte elemente pentru utilizator normal -->
+                <h1 >Bun venit, {{user.username}}!</h1>
+                <p></p>
+                <h3 style="text-align: left;">Lista carti:</h3>
+                <p></p>
+                <ol style="text-align: left;">
+                    {% for carte in carti_disponibile %}
+                    <li>
+                        <div class="carte">
+                            <h3><strong>Titlu:</strong> {{ carte.titlu }}</h3>
+                            <p><strong>Autor:</strong> {{ carte.autor }}</p>
+                            <p><strong>Descriere:</strong> {{ carte.descriere }}</p>
+                            {% if carte.disponibil %}
+                            <form action="{% url 'imprumuta-carte' carte.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="carte_id" value="{{ carte.id }}">
+                                <button type="submit" class="btn btn-primary">Împrumută carte</button>
+                            </form>
+                            {% else %}
+                                <p>Această carte este deja împrumutată.</p>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ol>
             {% endif %}
         {% else %}
-            <!-- Conținut pentru utilizatorii neautentificați sau necunoscuți -->
+            <!-- Ne autentificat -->
             <h1>Bun venit, Vizitator!</h1>
             <p>Vă rugăm să vă autentificați pentru a accesa conținutul.</p>
-            <!-- Elemente pentru utilizatorii neautentificați -->
         {% endif %}
 
 

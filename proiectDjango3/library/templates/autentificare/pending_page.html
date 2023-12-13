@@ -1,0 +1,13 @@
+{% extends "autentificare/index.html" %}
+{%block title%}Pending Page{% endblock %}
+{% load static %}
+
+{%block content%}
+{% csrf_token %}
+
+ <h1>Contul tau trebuie aprobare din partea adminului</h1>
+    <p>Contul tau este reviziuit de catre admin. Asteptati.</p>
+
+    <a href="{% url 'home' %}">Home</a>
+
+{%endblock%}

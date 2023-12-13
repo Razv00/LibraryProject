@@ -1,5 +1,15 @@
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    approved = models.BooleanField(default=False)
+
+    objects = models.Manager()
+
 
 
 class Carte(models.Model):
@@ -8,6 +18,7 @@ class Carte(models.Model):
     descriere = models.TextField()
     disponibil = models.BooleanField(default=True)
     utilizator_imprumutat = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    data_revenire = models.DateTimeField(null=True, blank=True)
 
     objects = models.Manager()
 
@@ -47,6 +58,10 @@ class Carte(models.Model):
         # Funcție pentru a actualiza informațiile unei cărți
 
     @classmethod
+    def getCarteByTitle(cls,titlu):
+        return cls.objects.filter(titlu=titlu)
+
+    @classmethod
     def updateCarte(cls,carte_id, **kwargs):
         carte = cls.objects.get(id=carte_id)
         for key, value in kwargs.items():
@@ -57,4 +72,8 @@ class Carte(models.Model):
     def delete_carte(cls,carte_id):
         carte = cls.objects.get(id=carte_id)
         carte.delete()
+
+    def setDataRevenire(self):
+        self.data_revenire = timezone.now() + timedelta(days=14)
+        self.save()
 

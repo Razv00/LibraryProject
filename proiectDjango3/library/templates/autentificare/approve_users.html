@@ -1,0 +1,18 @@
+{% extends "autentificare/index.html" %}
+{%block title%}Aprove Users{% endblock %}
+{% load static %}
+
+{%block content%}
+        {% if user.is_authenticated %}
+
+            {% for user_profile in users_to_approve %}
+                <h3>username: <strong>{{ user_profile.user.username }}</strong></h3>
+                <form action="{% url 'approve_user' user_profile.user_id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Approve</button>
+                </form>
+            {% endfor %}
+        {% else %}
+            <p>User nu autentificat in aprove users</p>
+        {%endif%}
+{%endblock%}
